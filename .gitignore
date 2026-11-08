@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-e2e
+.env
+.env.local
+.env.*.local
+test-results
+playwright-report
+tests/e2e/.artifacts
+*.log
+.mcp.json
+.claude/
