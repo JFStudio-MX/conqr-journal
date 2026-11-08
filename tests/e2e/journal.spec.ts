@@ -218,7 +218,7 @@ test('revisión trazable, exportación Markdown e impresión legible', async ({ 
 })
 
 test('móvil sin desbordamientos y estados vacíos honestos', async ({ browser }) => {
-  const ctx = await browser.newContext({ ...PIXEL, locale: 'es-MX', timezoneId: 'America/Mexico_City' })
+  const ctx = await browser.newContext({ ...PIXEL, viewport: { width: 360, height: 780 }, locale: 'es-MX', timezoneId: 'America/Mexico_City' })
   const page = await ctx.newPage()
   await fresh(page, 'mobile')
   for (const r of ['hoy', 'diario', 'diario?tab=juntas', 'diario?tab=proyectos', 'progreso', 'revision', 'ajustes']) {
@@ -229,7 +229,14 @@ test('móvil sin desbordamientos y estados vacíos honestos', async ({ browser }
   await page.goto('/#/progreso')
   await expect(page.getByText('Aún no hay registros confirmados en este periodo.')).toBeVisible()
   await expect(page.getByText('Sin registros en este periodo').first()).toBeVisible()
-  // la barra inferior está, y los botones principales tienen tamaño táctil
+  // Un texto largo sin espacios no debe ensanchar la página (el celular la alejaría)
+  await page.goto('/#/hoy')
+  await addEntry(page, 'https://www.figma.com/design/AbCdEfGhIjKlMnOpQrStUvWxYz0123456789/campaña-invierno-ecco-version-final')
+  for (const r of ['hoy', 'diario']) {
+    await page.goto(`/#/${r}`)
+    await page.waitForTimeout(250)
+    expect(await noHorizontalOverflow(page), r + ' con texto largo').toBeLessThanOrEqual(0)
+  }
   await page.goto('/#/hoy')
   const box = await page.getByTestId('quick-save').boundingBox()
   expect(box!.height).toBeGreaterThanOrEqual(44)

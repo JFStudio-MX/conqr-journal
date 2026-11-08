@@ -115,6 +115,16 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    /* Red de seguridad: nada puede ensanchar la página (el celular la alejaría). */
+    overflow-x: clip;
+  }
+  /* Textos largos sin espacios (enlaces, nombres de archivo) se parten en vez de ensanchar. */
+  body {
+    overflow-wrap: anywhere;
+  }
+  /* Los hijos de grid pueden encogerse por debajo de su contenido. */
+  .grid > * {
+    min-width: 0;
   }
   body {
     background: var(--bg);
@@ -125,7 +135,7 @@
     font-feature-settings: 'ss01' on;
     -webkit-font-smoothing: antialiased;
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   ::selection {
     background: color-mix(in oklab, var(--accent) 28%, transparent);
